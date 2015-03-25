@@ -1,7 +1,4 @@
-from enum import Enum
-
-
-class XboxButtons(Enum):
+class XboxButtons():
     A = 1
     B = 2
     X = 3
@@ -12,7 +9,7 @@ class XboxButtons(Enum):
     select = 8
 
 
-class XboxAxis(Enum):
+class XboxAxis():
     R_X = 1
     R_Y = 2
     L_X = 4
