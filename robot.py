@@ -5,16 +5,16 @@ from frc_enums import *
 class MyRobot(wpilib.IterativeRobot):
 
     def robotInit(self):
-        self.controller = wpilib.Joystick(0)
+        self.contr = wpilib.Joystick(0)
         self.drive = wpilib.RobotDrive(0, 1)
 
     def teleopPeriodic(self):
         self.drive.tankDrive(self.controller.getRawAxis(XboxAxis.L_Y),
-                             self.controller.getRawAxis(XboxAxis.R_X))
-        if self.controller.getRawButon(XboxButtons.A):
+                             self.controller.getRawAxis(XboxAxis.R_Y))
+        if self.contr.getRawButon(XboxButtons.A):
             print("You hit A")
-#        self.drive.mecanumDrive_Cartesian(self.controller.getRawAxis(XboxAxis.R_Y.value),
-#                                  self.controller.getRawAxis(XboxAxis.L_X.value),
+#        self.drive.mecanumDrive_Cartesian(self.contr.getRawAxis(XboxAxis.R_Y),
+#                                  self.contr.getRawAxis(XboxAxis.L_X),
 #                                  0)
 
 
