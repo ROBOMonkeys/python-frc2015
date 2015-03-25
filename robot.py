@@ -11,6 +11,8 @@ class MyRobot(wpilib.IterativeRobot):
     def teleopPeriodic(self):
         self.drive.tankDrive(self.controller.getRawAxis(XboxAxis.L_Y.value),
                              self.controller.getRawAxis(XboxAxis.R_X.value))
+        if self.controller.getRawButon(XboxButtons.A.value):
+            print("You hit A")
 #        self.drive.mecanumDrive_Cartesian(self.controller.getRawAxis(XboxAxis.R_Y.value),
 #                                  self.controller.getRawAxis(XboxAxis.L_X.value),
 #                                  0)
