@@ -1,4 +1,4 @@
-class XboxButtons():
+class XboxButton():
     A = 1
     B = 2
     X = 3
@@ -10,8 +10,9 @@ class XboxButtons():
 
 
 class XboxAxis():
-    R_X = 1
-    R_Y = 2
+    R_X = 0
+    R_Y = 1
     L_X = 4
     L_Y = 5
-    Z = 3
+    Z_D = 2
+    Z_U = 3
