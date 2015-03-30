@@ -38,8 +38,10 @@ class MyRobot(wpilib.IterativeRobot):
         elif not (self.contr.getRawButton(XboxButton.A) and self.sol.get()):
             self.sol.set(False)
         
-#        if self.enc.get() <= 20 or self.enc.get() >= -20:
-#            self.enc.reset()
+        if self.contr.getRawButton(XboxButton.R_bump):
+            wpilib.DriverStation.reportError("not implemented yet")
+        if self.contr.getRawButton(XboxButton.L_bump):
+            wpilib.DriverStation.reportError("not implemented yet")
         
         if self.sol.get() and self.enc.get() > 100 and self.armspeed == 0:
             self.armMotor.set(.08)
