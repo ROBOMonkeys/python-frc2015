@@ -12,6 +12,9 @@ class MyRobot(wpilib.IterativeRobot):
         self.enc = wpilib.Encoder(aChannel=3, bChannel=4)
         self.enc.reset()
         self.speed_contr = 1/3
+        self.armLocation = 0
+        self.armLocations = [0, 2500, 5000, 7500]
+        self.manual_arm = False
 
     def teleopPeriodic(self):
         self.y = self.contr.getRawAxis(XboxAxis.R_Y)
@@ -25,23 +28,29 @@ class MyRobot(wpilib.IterativeRobot):
         if self.y < 0.25 and self.y > -0.25:
             self.y = 0
         
-        self.armspeed = self.contr.getRawAxis(XboxAxis.Z_U) - self.contr.getRawAxis(XboxAxis.Z_D)
         self.drive.mecanumDrive_Cartesian(self.y * self.speed_contr,
                                           -self.rot * self.speed_contr,
                                           self.x * self.speed_contr,
                                           0)
         
-        self.armMotor.set(self.armspeed)
-        
         if self.contr.getRawButton(XboxButton.A):
             self.sol.set(True)
         elif not (self.contr.getRawButton(XboxButton.A) and self.sol.get()):
             self.sol.set(False)
-        
+
+        if self.contr.getRawButton(XboxButton.Y):
+            self.manual_arm = not self.manual_arm
+            
         if self.contr.getRawButton(XboxButton.R_bump):
-            wpilib.DriverStation.reportError("not implemented yet")
+            self.armLocation += 1
         if self.contr.getRawButton(XboxButton.L_bump):
-            wpilib.DriverStation.reportError("not implemented yet")
+            self.armLocation -= 1
+
+        if self.manual_arm:
+            self.armspeed = self.contr.getRawAxis(XboxAxis.Z_U) - self.contr.getRawAxis(XboxAxis.Z_D)
+        else:
+            if self.enc.get() != self.armLocations[self.armLocation]:
+                self.armSpeed = (self.armLocations[self.armLocation] - self.enc.get()) * 0.8
         
         if self.sol.get() and self.enc.get() > 100 and self.armspeed == 0:
             self.armMotor.set(.08)
