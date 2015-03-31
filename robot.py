@@ -1,6 +1,7 @@
 import wpilib
 from frc_enums import XboxAxis, XboxButton
 
+import math
 
 class MyRobot(wpilib.IterativeRobot):
     def robotInit(self):
@@ -50,7 +51,7 @@ class MyRobot(wpilib.IterativeRobot):
             self.armspeed = self.contr.getRawAxis(XboxAxis.Z_U) - self.contr.getRawAxis(XboxAxis.Z_D)
         else:
             if self.enc.get() != self.armLocations[self.armLocation]:
-                self.armSpeed = (self.armLocations[self.armLocation] - self.enc.get()) * 0.8
+                self.armSpeed = math.copysign(1, self.armLocations[self.armLocation] - self.enc.get()) * 0.8
         
         if self.sol.get() and self.enc.get() > 100 and self.armspeed == 0:
             self.armMotor.set(.08)
