@@ -11,8 +11,8 @@ import math
 class MyRobot(wpilib.IterativeRobot):
     # function that runs when we start up the robot
     def robotInit(self):
-        init_buttons()                                    # initialize the XboxButtons class
         self.contr = wpilib.Joystick(0)                   # initialize the joystick
+        init_buttons(self.contr)                          # initialize the XboxButtons class
         self.drive = wpilib.RobotDrive(1, 2, 3, 4)        # set up the robot drive -- 1,2,3,4 are the PWM cable outputs on the RIO
         self.sol = wpilib.Solenoid(0)                     # initialize the solenoid -- 0 is the DIO port
         self.sol.set(False)                               #  set the initial value for the solenoid
@@ -88,8 +88,10 @@ class MyRobot(wpilib.IterativeRobot):
             finally:
                 # finally, we get the location that we want the encoder to go to
                 #  and we get the encoder to go to that location
-                if self.enc.get() != self.armLocations[self.armLocation]:
-                    self.armspeed = math.copysign(1, self.armLocations[self.armLocation] - self.enc.get()) * 0.8
+                cur_enc = self.enc.get()
+                if cur_enc != self.armLocations[self.armLocation] and (
+                        not cur_enc < 100):
+                    self.armspeed = math.copysign(1, self.armLocations[self.armLocation] - cur_enc) * 0.8
         
         # if the solenoid is out then we need to pretend that we have a box
         #  which means that the arm needs to have a little more OOMPH to stay up
