@@ -1,5 +1,6 @@
 # import the buttons package from wpilib
 from wpilib import buttons
+from wpilib.timer import Timer
 
 
 class XboxButton(buttons.JoystickButton):
@@ -12,6 +13,5 @@ class XboxButton(buttons.JoystickButton):
 
     def poll(self):
         rtn_val = self.get()
-        for i in range(0, 10):
-            pass
+        Timer.delay(.02)
         return rtn_val
