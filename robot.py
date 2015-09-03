@@ -21,7 +21,7 @@ class MyRobot(wpilib.IterativeRobot):
         self.enc.reset()                                  #  makes sure the encoder values start at 0
         self.speed_contr = 1/3                            # speed controller constant
         self.armLocation = 0                              # sets the current arm location
-        self.armLocations = [0, 2500, 5000, 7500]         # the different arm location encoder values
+        self.armLocations = [500, 1000, 1500, 2500, 3000, 4000] # the different arm location encoder values
         self.manual_arm = True                            # boolean that determines if the arm is under manual control on startup
         self.armspeed = 0                                 # sets arm speed to zero originally
 
@@ -64,9 +64,15 @@ class MyRobot(wpilib.IterativeRobot):
         #  the bumpers allow for automatic movement by changing the location that we're referencing out of
         #  armLocations
         if XboxButtons.R_bump.poll():
-            self.armLocation += 1
+            if not self.armLocation + 1 >= 4:
+                self.armLocation += 1
+            else:
+                self.armLocation = len(self.armLocations) - 1
         if XboxButtons.L_bump.poll():
-            self.armLocation -= 1
+            if not self.armLocation - 1 < 0:
+                self.armLocation -= 1
+            else:
+                self.armLocation = 0
 
         # checks if we're using manual arm control
         if self.manual_arm:
@@ -90,8 +96,9 @@ class MyRobot(wpilib.IterativeRobot):
                 #  and we get the encoder to go to that location
                 cur_enc = self.enc.get()
                 if cur_enc != self.armLocations[self.armLocation] and (
-                        not cur_enc < 100):
-                    self.armspeed = math.copysign(1, self.armLocations[self.armLocation] - cur_enc) * 0.8
+                        not cur_enc < 450) and (
+                            not cur_enc >= 4340 or not cur_enc == 4373):
+                    self.armspeed = math.copysign(1, self.armLocations[self.armLocation] - cur_enc) * (1 - (cur_enc / self.armLocations[self.armLocation]))
         
         # if the solenoid is out then we need to pretend that we have a box
         #  which means that the arm needs to have a little more OOMPH to stay up
@@ -106,14 +113,7 @@ class MyRobot(wpilib.IterativeRobot):
         self.armMotor.set(self.armspeed)
 
         # debugging print messages
-        try:
-            self.armLocations[self.armLocation]
-        except:
-            self.armLocation = (min(len(self.armLocations) - 1, self.armLocation)
-                                if self.armLocation > len(self.armLocations) else
-                                max(0, self.armLocation))
-        finally:
-            wpilib.DriverStation.reportError(str(self.armLocation) + " " + str(math.copysign(1, self.armLocations[self.armLocation] - self.enc.get()) * 0.8) + "\n", False)
+        wpilib.DriverStation.reportError(str(self.armLocation) + " " + str(self.armspeed) + "\n", False)
 
 # if this is the main thread, run the MyRobot class
 if __name__ == '__main__':
