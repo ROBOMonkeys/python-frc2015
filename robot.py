@@ -2,7 +2,7 @@
 import wpilib
 
 # import the custom classes that were made to ease the declaration of the buttons and joysticks
-from frc_enums import XboxAxis, XboxButton
+from frc_enums import XboxAxis, XboxButtons, init_buttons
 
 # import all da math
 import math
@@ -11,6 +11,7 @@ import math
 class MyRobot(wpilib.IterativeRobot):
     # function that runs when we start up the robot
     def robotInit(self):
+        init_buttons()                                    # initialize the XboxButtons class
         self.contr = wpilib.Joystick(0)                   # initialize the joystick
         self.drive = wpilib.RobotDrive(1, 2, 3, 4)        # set up the robot drive -- 1,2,3,4 are the PWM cable outputs on the RIO
         self.sol = wpilib.Solenoid(0)                     # initialize the solenoid -- 0 is the DIO port
@@ -47,22 +48,24 @@ class MyRobot(wpilib.IterativeRobot):
                                           0)
 
         # if A is pressed set the solenoid out
-        if self.contr.getRawButton(XboxButton.A):
+        if XboxButtons.A.poll():
             self.sol.set(True)
         # but if it isn't pressed and the solenoid is out, pull it back in
-        elif not (self.contr.getRawButton(XboxButton.A) and self.sol.get()):
+        elif not (XboxButtons.A.poll() and self.sol.get()):
             self.sol.set(False)
 
-        # if the Y button is pressed change the arm to 'auto' mode WIP
-        if self.contr.getRawButton(XboxButton.Y):
+        # if the Y button is pressed change the arm to 'auto' mode
+        # WIP
+        if XboxButtons.Y.poll():
             self.manual_arm = not self.manual_arm
+            wpilib.DriverStation.reportError("mode changed\n", False)
 
         # THIS IS ONLY APPLICABLE TO AUTO-ARM MODE
         #  the bumpers allow for automatic movement by changing the location that we're referencing out of
         #  armLocations
-        if self.contr.getRawButton(XboxButton.R_bump):
+        if XboxButtons.R_bump.poll():
             self.armLocation += 1
-        if self.contr.getRawButton(XboxButton.L_bump):
+        if XboxButtons.L_bump.poll():
             self.armLocation -= 1
 
         # checks if we're using manual arm control
